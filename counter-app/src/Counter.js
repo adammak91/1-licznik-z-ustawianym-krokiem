@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import './Counter.css';
+import './ButtonsPanel.css';
 
 import Display from './Display';
 import ButtonsPanel from './ButtonsPanel';
-// import Clock from './Clock';
-import ClockFunctional from './ClockFunctional';
+
+import Step from "./Step";
 
 class Counter extends Component {
 
@@ -13,79 +14,73 @@ class Counter extends Component {
 
         this.state = {
             counterValue: this.props.initValue,
-            showClock: true,
-        };
-
-        // binding needed when this.changeValue is a ES5 method
-        // this.changeValue = this.changeValue.bind(this);
+            stepValue: 5
+        }
     }
 
-    //changeValue() { // ES5 method (no this context by default)
-    changeValue = (action) => { // ES6 method
 
-        this.setState((prevState, prevProps) => {
-            
-            let currentCounterValue = prevState.counterValue;
+    changeValue = (action) => {
+        
 
-            if (action === 'add') {
-                currentCounterValue += 1;
-            } else if (action === 'reinit') {
-                currentCounterValue = prevProps.initValue;
-            } else {
-                currentCounterValue = 0;
-            }
+        let currentCounterValue = this.state.counterValue;
 
-            return({
-                counterValue: currentCounterValue
-            });
-        });
-    }
 
-    toggleClock = () => {
-        this.setState((prevState) => {
-            return({
-                showClock: !prevState.showClock
-            });
-        })
+
+        if (action === 'add') {
+            currentCounterValue += 1;
+        
+        } else if (action === 'reinit') {
+            currentCounterValue = this.props.initValue;
+        
+        } else {
+            currentCounterValue = 0;
+        }
+
+
+        this.setState({
+            counterValue: currentCounterValue
+        }
+        );
 
     }
+
+        setStepValue = (inputValue) => {
+            this.setState({stepValue: parseFloat(inputValue)})
+        }
+
+
+        buttonStepMethod = () => {
+            this.setState((prevState) => {
+                return ({counterValue: prevState.counterValue + this.state.stepValue})
+            })
+        }
 
     render() {
 
-        let clockElement = '';
-        if(this.state.showClock) {
-            // clockElement = <Clock toggleClockMethod={this.toggleClock} />;
-            clockElement = <ClockFunctional toggleClockMethod={this.toggleClock} />;
-        } else {
-            clockElement = <span onClick={this.toggleClock} className="show-clock">show clock</span>
-        }
+        // let randomNumber = Math.floor(Math.random() *(108 - 1 + 1) + 1);
 
         return (
             <div className="counter">
-                Counter:
+                <span>Licznik:</span>
                 <Display displayValue={this.state.counterValue} />
-                <ButtonsPanel buttonMethod={this.changeValue} />
-                {clockElement}
+                <ButtonsPanel buttonMethod={this.changeValue} stepValue={this.state.stepValue} />
+                <Step buttonStepMethod={this.buttonStepMethod} stepValue={this.state.stepValue} updateStep={this.setStepValue} />
+
             </div>
-        );
+        )
     }
 }
 
-export default Counter;
 
 // function Counter(props) {
-
-//     let randomNumber = Math.floor(Math.random() * (108 - 1 + 1) + 1);
-
 //     return (
-//         <div className="counter">
-//             Counter:
-//             <span className="value">
-//                 {props.initValue}
-//             </span>
-//         </div>
-//     );
+// <div className="counter">
+//     Counter:
+//     <span className="value">
+//         108
+//     </span>
+// </div>
+//     )
 // }
 
-// export default Counter;
-
+export default Counter;
